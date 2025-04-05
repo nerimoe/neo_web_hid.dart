@@ -2,9 +2,9 @@ import 'package:web/web.dart';
 import 'dart:js_interop';
 
 @JS('navigator.hid')
-external Hid? get _hid;
+external Hid? get hid;
 
-bool canUseHid() => _hid != null;
+bool canUseHid() => hid != null;
 
 extension type Hid._(EventTarget _) implements EventTarget {
   external JSPromise<JSArray<HIDDevice>> getDevices();
