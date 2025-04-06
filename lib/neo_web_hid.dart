@@ -1,14 +1,56 @@
 import 'dart:typed_data';
-
-import 'package:web/web.dart';
 import 'dart:js_interop';
+import 'js_classes.dart';
 
 @JS('navigator.hid')
-external JSHid? get hid;
+external JSHID? get _hid;
 
-bool canUseHid() => hid != null;
+bool canUseHid() => _hid != null;
+HID? _instance;
+HID get hid {
+  if (_hid != null) {
+    return _instance ??= HID(_hid!);
+  }
+  throw 'navigator.hid unavailable';
+}
 
-class Hid {}
+class HID {
+  final JSHID _interop;
+  HID(this._interop);
+  Function(HIDConnectionEvent event)? onconnect;
+  Function(HIDConnectionEvent event)? ondisconnect;
+
+  Future<List<HIDDevice>> getDevices() => _interop
+      .getDevices()
+      .toDart
+      .then((value) => value.toDart.map((e) => HIDDevice(e)).toList());
+  Future<List<HIDDevice>> requestDevice(HIDDeviceRequestOptions option) =>
+      _interop
+          .requestDevice(option.toJS)
+          .toDart
+          .then((value) => value.toDart.map((e) => HIDDevice(e)).toList());
+  void onConnect(Function(HIDConnectionEvent event) func) {
+    _interop.onconnect = _onConnect.toJS;
+    onconnect = func;
+  }
+
+  void onDisconnect(Function(HIDConnectionEvent event) func) {
+    _interop.ondisconnect = _onDisconnect.toJS;
+    ondisconnect = func;
+  }
+
+  void _onConnect(JSHIDConnectionEvent event) {
+    if (onconnect != null) {
+      onconnect!(event.toDart);
+    }
+  }
+
+  void _onDisconnect(JSHIDConnectionEvent event) {
+    if (ondisconnect != null) {
+      ondisconnect!(event.toDart);
+    }
+  }
+}
 
 class HIDDevice {
   final JSHIDDevice _interop;
@@ -67,49 +109,10 @@ class HIDInputReportEvent {
   int get reportId => _interop.reportId.toDartInt;
 }
 
-extension type JSHid._(EventTarget _) implements EventTarget {
-  external JSPromise<JSArray<JSHIDDevice>> getDevices();
-  external JSPromise<JSArray<JSHIDDevice>> requestDevice(JSArray option);
-
-  external EventHandler get onconnect;
-  external EventHandler get ondisconnect;
-  external set onconnect(EventHandler value);
-  external set ondisconnect(EventHandler value);
-}
-
-extension type JSHIDDevice._(EventTarget _) implements EventTarget {
-  external JSBoolean get opened;
-  external JSNumber get vendorId;
-  external JSNumber get productId;
-  external JSString get productName;
-  external JSArray<JSHIDCollection> get collections;
-
-  external JSPromise open();
-  external JSPromise close();
-  external JSPromise forget();
-  external JSPromise<JSDataView> receiveFeatureReport(JSNumber reportId);
-  external JSPromise sendFeatureReport(JSNumber reportId, JSDataView data);
-  external JSPromise sendReport(JSNumber reportId, JSDataView data);
-
-  external EventHandler get oninputreport;
-  external set oninputreport(EventHandler value);
-}
-
-extension type JSHIDConnectionEvent._(Event _) implements Event {
-  external JSHIDDevice get device;
-}
-
-extension type JSHIDInputReportEvent._(Event _) implements Event {
-  external JSDataView get data;
-  external JSHIDDevice get device;
-  external JSNumber get reportId;
-}
-
-extension type JSHIDCollection._(JSObject _) implements JSObject {
-  external JSNumber get usagePage;
-  external JSNumber get usage;
-  external JSNumber get type;
-  external JSArray<JSHIDCollection> get children;
+class HIDConnectionEvent {
+  final JSHIDConnectionEvent _interop;
+  HIDConnectionEvent(this._interop);
+  HIDDevice get device => _interop.device.toDart;
 }
 
 /*
@@ -121,16 +124,10 @@ final filter = HIDDeviceRequestOptions(
 );
 */
 
-extension type HIDDeviceRequestOptions._(JSArray<JSAny?> filters)
-    implements JSArray<JSAny?> {
-  external HIDDeviceRequestOptions({JSArray<RequestOptionsFilter> filters});
-}
-
-extension type RequestOptionsFilter._(JSObject _) implements JSObject {
-  external RequestOptionsFilter({
-    int vendorId,
-    int productId,
-    int usage,
-    int usagePage,
-  });
+class HIDDeviceRequestOptions {
+  JSHIDDeviceRequestOptions? _interop;
+  HIDDeviceRequestOptions({List<RequestOptionsFilter>? filters}) {
+    _interop = JSHIDDeviceRequestOptions(filters: filters!.toJS);
+  }
+  JSHIDDeviceRequestOptions get toJS => _interop!;
 }
