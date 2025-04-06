@@ -29,14 +29,14 @@ class HID {
           .requestDevice(option.toJS)
           .toDart
           .then((value) => value.toDart.map((e) => HIDDevice(e)).toList());
-  void onConnect(Function(HIDConnectionEvent event) func) {
+  void onConnect(Function(HIDConnectionEvent event)? callback) {
     _interop.onconnect = _onConnect.toJS;
-    _onconnect = func;
+    _onconnect = callback;
   }
 
-  void onDisconnect(Function(HIDConnectionEvent event) func) {
+  void onDisconnect(Function(HIDConnectionEvent event)? callback) {
     _interop.ondisconnect = _onDisconnect.toJS;
-    _ondisconnect = func;
+    _ondisconnect = callback;
   }
 
   void _onConnect(JSHIDConnectionEvent event) {
@@ -77,9 +77,9 @@ class HIDDevice {
 
   Function(HIDInputReportEvent event)? _oninputreport;
 
-  void onInputReport(Function(HIDInputReportEvent event) func) {
+  void onInputReport(Function(HIDInputReportEvent event)? callback) {
     _interop.oninputreport = _onInputReport.toJS;
-    _oninputreport = func;
+    _oninputreport = callback;
   }
 
   void _onInputReport(JSHIDInputReportEvent event) {
