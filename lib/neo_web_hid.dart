@@ -17,8 +17,8 @@ HID get hid {
 class HID {
   final JSHID _interop;
   HID(this._interop);
-  Function(HIDConnectionEvent event)? onconnect;
-  Function(HIDConnectionEvent event)? ondisconnect;
+  Function(HIDConnectionEvent event)? _onconnect;
+  Function(HIDConnectionEvent event)? _ondisconnect;
 
   Future<List<HIDDevice>> getDevices() => _interop
       .getDevices()
@@ -31,23 +31,23 @@ class HID {
           .then((value) => value.toDart.map((e) => HIDDevice(e)).toList());
   void onConnect(Function(HIDConnectionEvent event) func) {
     _interop.onconnect = _onConnect.toJS;
-    onconnect = func;
+    _onconnect = func;
   }
 
   void onDisconnect(Function(HIDConnectionEvent event) func) {
     _interop.ondisconnect = _onDisconnect.toJS;
-    ondisconnect = func;
+    _ondisconnect = func;
   }
 
   void _onConnect(JSHIDConnectionEvent event) {
-    if (onconnect != null) {
-      onconnect!(event.toDart);
+    if (_onconnect != null) {
+      _onconnect!(event.toDart);
     }
   }
 
   void _onDisconnect(JSHIDConnectionEvent event) {
-    if (ondisconnect != null) {
-      ondisconnect!(event.toDart);
+    if (_ondisconnect != null) {
+      _ondisconnect!(event.toDart);
     }
   }
 }
@@ -75,16 +75,16 @@ class HIDDevice {
   Future sendReport(int reportId, ByteData data) =>
       _interop.sendReport(reportId.toJS, data.toJS).toDart;
 
-  Function(HIDInputReportEvent event)? oninputreport;
+  Function(HIDInputReportEvent event)? _oninputreport;
 
   void onInputReport(Function(HIDInputReportEvent event) func) {
     _interop.oninputreport = _onInputReport.toJS;
-    oninputreport = func;
+    _oninputreport = func;
   }
 
   void _onInputReport(JSHIDInputReportEvent event) {
-    if (oninputreport != null) {
-      oninputreport!(HIDInputReportEvent(event));
+    if (_oninputreport != null) {
+      _oninputreport!(HIDInputReportEvent(event));
     }
   }
 }
