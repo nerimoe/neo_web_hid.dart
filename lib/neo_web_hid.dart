@@ -131,3 +131,12 @@ class HIDDeviceRequestOptions {
   }
   JSHIDDeviceRequestOptions get toJS => _interop!;
 }
+
+extension type RequestOptionsFilter._(JSObject _) implements JSObject {
+  external RequestOptionsFilter({
+    int vendorId,
+    int productId,
+    int usage,
+    int usagePage,
+  });
+}

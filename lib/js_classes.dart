@@ -10,6 +10,7 @@ extension type JSHID._(EventTarget _) implements EventTarget {
   external EventHandler get ondisconnect;
   external set onconnect(EventHandler value);
   external set ondisconnect(EventHandler value);
+  HID get toDart => HID(this);
 }
 
 extension type JSHIDDevice._(EventTarget _) implements EventTarget {
@@ -48,19 +49,10 @@ extension type JSHIDCollection._(JSObject _) implements JSObject {
   external JSNumber get usage;
   external JSNumber get type;
   external JSArray<JSHIDCollection> get children;
+  HIDCollection get toDart => HIDCollection(this);
 }
-
 
 extension type JSHIDDeviceRequestOptions._(JSArray<JSAny?> filters)
     implements JSArray<JSAny?> {
   external JSHIDDeviceRequestOptions({JSArray<RequestOptionsFilter> filters});
-}
-
-extension type RequestOptionsFilter._(JSObject _) implements JSObject {
-  external RequestOptionsFilter({
-    int vendorId,
-    int productId,
-    int usage,
-    int usagePage,
-  });
 }
