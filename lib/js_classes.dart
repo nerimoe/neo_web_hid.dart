@@ -4,7 +4,8 @@ import 'neo_web_hid.dart';
 
 extension type JSHID._(EventTarget _) implements EventTarget {
   external JSPromise<JSArray<JSHIDDevice>> getDevices();
-  external JSPromise<JSArray<JSHIDDevice>> requestDevice(JSArray option);
+  external JSPromise<JSArray<JSHIDDevice>> requestDevice(
+      JSHIDDeviceRequestOptions option);
 
   external EventHandler get onconnect;
   external EventHandler get ondisconnect;
@@ -52,7 +53,20 @@ extension type JSHIDCollection._(JSObject _) implements JSObject {
   HIDCollection get toDart => HIDCollection(this);
 }
 
-extension type JSHIDDeviceRequestOptions._(JSArray<JSAny?> filters)
-    implements JSArray<JSAny?> {
-  external JSHIDDeviceRequestOptions({JSArray<RequestOptionsFilter> filters});
+extension type JSHIDDeviceRequestOptions._(JSObject _) implements JSObject {
+  external factory JSHIDDeviceRequestOptions(
+      {JSArray<JSHIDDeviceFilter> filters});
+}
+
+extension type JSHIDDeviceFilter._(JSObject _) implements JSObject {
+  external factory JSHIDDeviceFilter({
+    int? vendorId,
+    int? productId,
+    int? usagePage,
+    int? usage,
+  });
+  external set vendorId(int value);
+  external set productId(int value);
+  external set usagePage(int value);
+  external set usage(int value);
 }

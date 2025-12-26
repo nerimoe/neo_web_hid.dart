@@ -123,20 +123,46 @@ final filter = HIDDeviceRequestOptions(
   filters: [RequestOptionsFilter(vendorId: 0xF822)].toJS,
 );
 */
-
 class HIDDeviceRequestOptions {
-  JSHIDDeviceRequestOptions? _interop;
-  HIDDeviceRequestOptions({List<RequestOptionsFilter>? filters}) {
-    _interop = JSHIDDeviceRequestOptions(filters: filters!.toJS);
-  }
-  JSHIDDeviceRequestOptions get toJS => _interop!;
+  // 内部持有 JS 对象
+  final JSHIDDeviceRequestOptions _interop;
+
+  HIDDeviceRequestOptions({required List<RequestOptionsFilter> filters})
+      : _interop = JSHIDDeviceRequestOptions(
+          filters: filters.map((e) => e.toJS).toList().toJS,
+        );
+
+  JSHIDDeviceRequestOptions get toJS => _interop;
 }
 
-extension type RequestOptionsFilter._(JSObject _) implements JSObject {
-  external RequestOptionsFilter({
-    int vendorId,
-    int productId,
-    int usage,
-    int usagePage,
+class RequestOptionsFilter {
+  final int? vendorId;
+  final int? productId;
+  final int? usagePage;
+  final int? usage;
+
+  RequestOptionsFilter({
+    this.vendorId,
+    this.productId,
+    this.usagePage,
+    this.usage,
   });
+
+  // 将 Dart 对象转换为 JS 互操作对象
+  JSHIDDeviceFilter get toJS {
+    final obj = JSHIDDeviceFilter();
+    if (vendorId != null) {
+      obj.vendorId = vendorId!;
+    }
+    if (productId != null) {
+      obj.productId = productId!;
+    }
+    if (usagePage != null) {
+      obj.usagePage = usagePage!;
+    }
+    if (usage != null) {
+      obj.usage = usage!;
+    }
+    return obj;
+  }
 }
